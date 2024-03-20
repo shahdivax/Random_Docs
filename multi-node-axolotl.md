@@ -24,7 +24,8 @@ create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and in
 .
 ```
 ## accelerate Config 
-- example of 2 nodes, both node has 4xV100, below are the inputs I gave while config. accelerate (in sequence) of node one : 
+- example of 2 nodes, both node has 4xV100, below are the inputs I gave while config. accelerate (in sequence) of node one :
+- do ``accelerate config`` and fill inputs as below
 > This machine <br>
 > multi_gpu <br>
 > 2 <br>
@@ -70,7 +71,8 @@ create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and in
     use_cpu: false 
 ```
  
-- below are the inputs I gave while config. accelerate (in sequence) of node two : 
+- below are the inputs I gave while config. accelerate (in sequence) of node two :
+- - do ``accelerate config`` and fill inputs as below
 > This machine <br>
 > multi_gpu <br>
 > 2 <br>
