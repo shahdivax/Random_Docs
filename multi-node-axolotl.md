@@ -38,7 +38,7 @@ create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and in
 > no <br>
 > yes <br>
 > yes <br>
-> deepspeed_config/zero2.json <br>
+> deepspeed_configs/zero2.json <br>
 > no <br>
 > pdsh <br>
 > deepspeed_hostfile <br>
@@ -51,7 +51,7 @@ create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and in
     compute_environment: LOCAL_MACHINE
     debug: true
     deepspeed_config:
-      deepspeed_config_file: deepspeed_config/zero2.json
+      deepspeed_config_file: deepspeed_configs/zero2.json
       deepspeed_hostfile: deepspeed_hostfile
       deepspeed_multinode_launcher: pdsh
       zero3_init_flag: false
@@ -85,7 +85,7 @@ create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and in
 > no <br>
 > yes <br>
 > yes <br>
-> deepspeed_config/zero2.json <br>
+> deepspeed_configs/zero2.json <br>
 > no <br>
 > pdsh <br> 
 > deepspeed_hostfile <br>
@@ -98,7 +98,7 @@ create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and in
     compute_environment: LOCAL_MACHINE
     debug: true
     deepspeed_config:
-      deepspeed_config_file: deepspeed_config/zero2.json
+      deepspeed_config_file: deepspeed_configs/zero2.json
       deepspeed_hostfile: deepspeed_hostfile
       deepspeed_multinode_launcher: pdsh
       zero3_init_flag: false
