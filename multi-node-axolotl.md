@@ -1,9 +1,9 @@
-### Configure sshd_config 
+## Configure sshd_config 
 Inside ~/etc/ssh/ <br>
 	 ``sudo nano sshd_config`` <br>
 	 uncomment public key auth on <br>
 	 do this on all the nodes and server <br>
-### Generate public key
+## Generate public key
 ``ssh-keygen -t rsa`` (don't set any passphrase when asked) <br>
 copy the public key ``cat ~/.ssh/id_rsa.pub`` <br>
 paste it to authorized keys for passwordless  access ``nano ~/.ssh/authorized_keys`` <br>
@@ -14,7 +14,7 @@ now for an example of 2 nodes (server and node): <br>
 this will set up passwordless ssh on both sides <br>
 now you can check passwordless ssh by: <br>
 inside node 1 do ``ssh <ip-node2>`` , it should open node2 inside node 1 withput error.  
-### axolotl 
+## axolotl 
 now configure axolotl as usual on each node which has same files ``.yml`` and everything is the same  
 create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and include something like below 
 
@@ -23,7 +23,7 @@ create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and in
 	.
 	.
 
-### accelerate Config 
+## accelerate Config 
 example of 2 nodes, both node has 4xV100, below are the inputs I gave while config. accelerate (in sequence) of node one : 
 > This machine <br>
 > multi_gpu <br>
@@ -114,7 +114,7 @@ below is the accelerate config file that looks like this for me for node 2:
     tpu_use_cluster: false
     tpu_use_sudo: false
     use_cpu: false
-### Finetuning
+## Finetuning
 now inside axolotl inside node 1 (server), you can run the finetunining process
 eg: ``accelerate launch -m axolotl.cli.train examples/llama-2/qlora.yml``  
 this will start the finetuning process and you can check different IPs before steps to see that it's running on every node. 
