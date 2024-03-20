@@ -1,30 +1,30 @@
 ## Configure sshd_config 
-Inside ~/etc/ssh/ <br>
-	 ``sudo nano sshd_config`` <br>
-	 uncomment public key auth on <br>
-	 do this on all the nodes and server <br>
+- Inside ~/etc/ssh/ <br>
+	 ~ open sshd_config using ``sudo nano sshd_config`` <br>
+	 ~ uncomment public key auth on <br>
+	 ~ do this on all the nodes and server <br>
 ## Generate public key
-``ssh-keygen -t rsa`` (don't set any passphrase when asked) <br>
-copy the public key ``cat ~/.ssh/id_rsa.pub`` <br>
-paste it to authorized keys for passwordless  access ``nano ~/.ssh/authorized_keys`` <br>
-Now repeat these steps in node 2,3,... <br>
-now for an example of 2 nodes (server and node): <br>
-	- paste the generated key of node 1 in authorized keys of 1 and 2  <br>
-	- paste the generated key of node 2 in authorized keys of 1 and 2 <br>
-this will set up passwordless ssh on both sides <br>
-now you can check passwordless ssh by: <br>
-inside node 1 do ``ssh <ip-node2>`` , it should open node2 inside node 1 withput error.  
+- Generate key using ``ssh-keygen -t rsa`` (don't set any passphrase when asked) <br>
+- copy the public key ``cat ~/.ssh/id_rsa.pub`` <br>
+- paste it to authorized keys for passwordless  access ``nano ~/.ssh/authorized_keys`` <br>
+- Now repeat these steps in node 2,3,... <br>
+- now for an example of 2 nodes (server and node): <br>
+	~ paste the generated key of node 1 in authorized keys of 1 and 2  <br>
+	~ paste the generated key of node 2 in authorized keys of 1 and 2 <br>
+- this will set up passwordless ssh on both sides <br>
+- now you can check passwordless ssh by: <br>
+- inside node 1 do ``ssh <ip-node2>`` , it should open node2 inside node 1 withput error.  
 ## axolotl 
-now configure axolotl as usual on each node which has same files ``.yml`` and everything is the same  
+- now configure axolotl as usual on each node which has same files ``.yml`` and everything is the same  
 create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and include something like below 
-
-    <ip-node-1> slots=<num_gpu_in_node1>
-	<ip-node-2> slots=<num_gpu_in_node2> 
-	.
-	.
-
+```
+<ip-node-1> slots=<num_gpu_in_node1>
+<ip-node-2> slots=<num_gpu_in_node2> 
+.
+.
+```
 ## accelerate Config 
-example of 2 nodes, both node has 4xV100, below are the inputs I gave while config. accelerate (in sequence) of node one : 
+- example of 2 nodes, both node has 4xV100, below are the inputs I gave while config. accelerate (in sequence) of node one : 
 > This machine <br>
 > multi_gpu <br>
 > 2 <br>
@@ -45,8 +45,8 @@ example of 2 nodes, both node has 4xV100, below are the inputs I gave while conf
 > no <br>
 > 8 <br>
 
-below is the accelerate config file that looks like this for me for node 1 :
-
+- below is the accelerate config file that looks like this for me for node 1 :
+ ``` 
     compute_environment: LOCAL_MACHINE
     debug: true
     deepspeed_config:
@@ -68,9 +68,9 @@ below is the accelerate config file that looks like this for me for node 1 :
     tpu_use_cluster: false
     tpu_use_sudo: false
     use_cpu: false 
-
+```
  
-below are the inputs I gave while config. accelerate (in sequence) of node two : 
+- below are the inputs I gave while config. accelerate (in sequence) of node two : 
 > This machine <br>
 > multi_gpu <br>
 > 2 <br>
@@ -91,8 +91,8 @@ below are the inputs I gave while config. accelerate (in sequence) of node two :
 > no <br>
 > 8 <br>
 
-below is the accelerate config file that looks like this for me for node 2:
-  
+- below is the accelerate config file that looks like this for me for node 2:
+```  
     compute_environment: LOCAL_MACHINE
     debug: true
     deepspeed_config:
@@ -114,7 +114,8 @@ below is the accelerate config file that looks like this for me for node 2:
     tpu_use_cluster: false
     tpu_use_sudo: false
     use_cpu: false
+```
 ## Finetuning
-now inside axolotl inside node 1 (server), you can run the finetunining process
-eg: ``accelerate launch -m axolotl.cli.train examples/llama-2/qlora.yml``  
-this will start the finetuning process and you can check different IPs before steps to see that it's running on every node. 
+- now inside axolotl inside node 1 (server), you can run the finetunining process
+- eg: ``accelerate launch -m axolotl.cli.train examples/llama-2/qlora.yml``  
+- this will start the finetuning process and you can check different IPs before steps to see that it's running on every node. 
