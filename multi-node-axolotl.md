@@ -13,7 +13,7 @@
 	~ paste the generated key of node 2 in authorized keys of 1 and 2 <br>
 - this will set up passwordless ssh on both sides <br>
 - now you can check passwordless ssh by: <br>
-- inside node 1 do ``ssh <ip-node2>`` , it should open node2 inside node 1 withput error.  
+  ~ inside node 1 do ``ssh <ip-node2>`` , it should open node2 inside node 1 withput error.  
 ## axolotl 
 - now configure axolotl as usual on each node which has same files ``.yml`` and everything is the same  
 create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and include something like below 
