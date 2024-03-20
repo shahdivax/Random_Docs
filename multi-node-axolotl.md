@@ -70,9 +70,9 @@ create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and in
     tpu_use_sudo: false
     use_cpu: false 
 ```
- 
+
 - below are the inputs I gave while config. accelerate (in sequence) of node two :
-- - do ``accelerate config`` and fill inputs as below
+- do ``accelerate config`` and fill inputs as below
 > This machine <br>
 > multi_gpu <br>
 > 2 <br>
