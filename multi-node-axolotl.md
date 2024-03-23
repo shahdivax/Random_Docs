@@ -3,6 +3,7 @@
 	 ~ open sshd_config using ``sudo nano sshd_config`` <br>
 	 ~ uncomment public key auth on <br>
 	 ~ do this on all the nodes and server <br>
+	 ~ ``sudo systemctl restart sshd``
 ## Generate public key
 - Generate key using ``ssh-keygen -t rsa`` (don't set any passphrase when asked) <br>
 - copy the public key ``cat ~/.ssh/id_rsa.pub`` <br>
