@@ -155,5 +155,5 @@ chmod 755 /usr/lib
 
 and run 
 ```
-deepspeed --no_local_rank --hostfile deepspeed_hostfile --launcher pdsh --master_port 5000 --ssh_port 2222 --module axolotl.cli.train qlora.yml
+deepspeed --no_local_rank --deepspeed --deepspeed_config deepspeed_configs/zero1.json --hostfile deepspeed_hostfile --launcher pdsh --master_port 5000 --ssh_port 2222 --module axolotl.cli.train qlora.yml
 ```
