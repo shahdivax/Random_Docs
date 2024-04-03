@@ -122,3 +122,28 @@ create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and in
 - now inside axolotl inside node 1 (server), you can run the finetunining process
 - eg: ``accelerate launch -m axolotl.cli.train examples/llama-2/qlora.yml``  
 - this will start the finetuning process and you can check different IPs before steps to see that it's running on every node. 
+
+
+## For Docker 
+install pdsh
+```
+apt-get update
+apt-get install pdsh
+```
+
+environment setting 
+```
+export PDSH_SSH_ARGS_APPEND="-p 2222"
+```
+
+
+change permissions 
+```
+chown root:root /usr/lib/x86_64-linux-gnu/pdsh
+chown root:root /usr/lib
+```
+
+```
+chmod 755 /usr/lib/x86_64-linux-gnu/pdsh
+chmod 755 /usr/lib
+```
