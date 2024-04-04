@@ -1,159 +1,115 @@
-## Configure sshd_config 
-- Inside ~/etc/ssh/ <br>
-	 ~ open sshd_config using ``sudo nano sshd_config`` <br>
-	 ~ uncomment public key auth on <br>
-	 ~ do this on all the nodes and server <br>
-	 ~ ``sudo systemctl restart sshd``
-## Generate public key
-- Generate key using ``ssh-keygen -t rsa`` (don't set any passphrase when asked) <br>
-- copy the public key ``cat ~/.ssh/id_rsa.pub`` <br>
-- paste it to authorized keys for passwordless  access ``nano ~/.ssh/authorized_keys`` <br>
-- Now repeat these steps in node 2,3,... <br>
-- now for an example of 2 nodes (server and node): <br>
-	~ paste the generated key of node 1 in authorized keys of 1 and 2  <br>
-	~ paste the generated key of node 2 in authorized keys of 1 and 2 <br>
-- this will set up passwordless ssh on both sides <br>
-- now you can check passwordless ssh by: <br>
-  ~ inside node 1 do ``ssh <ip-node2>`` , it should open node2 inside node1 without error.  
-## axolotl 
-- now configure axolotl as usual on each node which has same files ``.yml`` and everything is the same  
-create a hostfile inside axolotl folder using ``nano deepspeed_hostfile`` and include something like below 
+```markdown
+# Distributed Finetuning with Axolotl
+
+This guide explains how to set up a distributed finetuning environment using Axolotl, a framework for finetuning large language models. The setup involves configuring SSH for passwordless access, generating public keys, and configuring Axolotl and Accelerate for multi-node training.
+
+## Prerequisites
+
+- Multiple nodes (servers or machines) with GPUs
+- Ubuntu or any other Linux distribution
+
+## Step 1: Configure SSH for Passwordless Access
+
+1. Open the `sshd_config` file on all nodes and the server:
+
+```bash
+sudo nano ~/etc/ssh/sshd_config
+```
+
+2. Uncomment the `PubkeyAuthentication` line to enable public key authentication.
+3. Save the changes and restart the SSH service:
+
+```bash
+sudo systemctl restart sshd
+```
+
+## Step 2: Generate Public Key
+
+1. Generate a public key using `ssh-keygen`:
+
+```bash
+ssh-keygen -t rsa
+```
+
+2. Copy the public key to the clipboard:
+
+```bash
+cat ~/.ssh/id_rsa.pub
+```
+
+3. Add the public key to the `authorized_keys` file on all nodes and the server:
+
+```bash
+nano ~/.ssh/authorized_keys
+```
+
+4. Repeat steps 1-3 on all other nodes.
+5. Exchange public keys between nodes:
+   - Paste the public key of Node 1 into the `authorized_keys` file of Node 2, and vice versa.
+   - Repeat this process for all node pairs.
+
+6. Test passwordless SSH access:
+
+```bash
+ssh <ip-of-other-node>
+```
+
+## Step 3: Configure Axolotl
+
+1. Configure Axolotl on each node with the same `.yml` files and settings.
+2. Create a `deepspeed_hostfile` inside the Axolotl folder:
+
+```bash
+nano deepspeed_hostfile
+```
+
+3. Add the IP addresses and GPU slots for each node:
+
 ```
 <ip-node-1> slots=<num_gpu_in_node1>
-<ip-node-2> slots=<num_gpu_in_node2> 
-.
-.
-```
-## accelerate Config 
-- example of 2 nodes, both node has 4xV100, below are the inputs I gave while config. accelerate (in sequence) of node one :
-- do ``accelerate config`` and fill inputs as below
-> This machine <br>
-> multi_gpu <br>
-> 2 <br>
-> 0 (for first node ie. server) <br>
-> <server_ip> <br>
-> 5000 <br>
-> no <br>
-> static <br>
-> yes <br>
-> no <br>
-> yes <br>
-> yes <br>
-> deepspeed_configs/zero2.json <br>
-> no <br>
-> pdsh <br>
-> deepspeed_hostfile <br>
-> no <br>
-> no <br>
-> 8 <br>
-
-- below is the accelerate config file that looks like this for me for node 1 :
- ``` 
-    compute_environment: LOCAL_MACHINE
-    debug: true
-    deepspeed_config:
-      deepspeed_config_file: deepspeed_configs/zero2.json
-      deepspeed_hostfile: deepspeed_hostfile
-      deepspeed_multinode_launcher: pdsh
-      zero3_init_flag: false
-    distributed_type: DEEPSPEED
-    downcast_bf16: 'no'
-    machine_rank: 0
-    main_process_ip: 34.220.20.212
-    main_process_port: 5000
-    main_training_function: main
-    num_machines: 2
-    num_processes: 8
-    rdzv_backend: static
-    same_network: false
-    tpu_env: []
-    tpu_use_cluster: false
-    tpu_use_sudo: false
-    use_cpu: false 
+<ip-node-2> slots=<num_gpu_in_node2>
 ```
 
-- below are the inputs I gave while config. accelerate (in sequence) of node two :
-- do ``accelerate config`` and fill inputs as below
-> This machine <br>
-> multi_gpu <br>
-> 2 <br>
-> 1 (for second node) <br> 
-> <server_ip> <br>
-> 5000 <br>
-> no <br>
-> static <br>
-> yes <br>
-> no <br>
-> yes <br>
-> yes <br>
-> deepspeed_configs/zero2.json <br>
-> no <br>
-> pdsh <br> 
-> deepspeed_hostfile <br>
-> no <br>
-> no <br>
-> 8 <br>
+## Step 4: Configure Accelerate
 
-- below is the accelerate config file that looks like this for me for node 2:
-```  
-    compute_environment: LOCAL_MACHINE
-    debug: true
-    deepspeed_config:
-      deepspeed_config_file: deepspeed_configs/zero2.json
-      deepspeed_hostfile: deepspeed_hostfile
-      deepspeed_multinode_launcher: pdsh
-      zero3_init_flag: false
-    distributed_type: DEEPSPEED
-    downcast_bf16: 'no'
-    machine_rank: 1
-    main_process_ip: 34.220.20.212
-    main_process_port: 5000
-    main_training_function: main
-    num_machines: 2
-    num_processes: 8
-    rdzv_backend: static
-    same_network: false
-    tpu_env: []
-    tpu_use_cluster: false
-    tpu_use_sudo: false
-    use_cpu: false
-```
-## Finetuning
-- now inside axolotl inside node 1 (server), you can run the finetunining process
-- eg: ``accelerate launch -m axolotl.cli.train examples/llama-2/qlora.yml``  
-- this will start the finetuning process and you can check different IPs before steps to see that it's running on every node. 
+Follow these steps on each node to configure Accelerate:
 
-
-## For Docker 
-install pdsh
-```
-apt-get update
-apt-get install pdsh
+```bash
+accelerate config
 ```
 
-environment setting 
-```
-export PDSH_SSH_ARGS_APPEND="-p 2222"
+### Node 1 (Server) Configuration
+
+1. Select `This machine` for the compute environment.
+2. Select `multi_gpu` for the compute type.
+3. Enter the number of machines (e.g., `2` for two nodes).
+4. Enter the machine rank `0` for the first node (server).
+5. Enter the server IP address.
+6. Enter the main process port (e.g., `5000`).
+7. Select `no` for setting up custom environment variables.
+8. Select `static` for the rendezvous backend.
+9. Select `yes` for running on the same network.
+10. Select `no` for using a cluster.
+11. Select `yes` for using Deepspeed.
+12. Select `yes` for using Deepspeed configs.
+13. Enter the Deepspeed config file (e.g., `deepspeed_configs/zero2.json`).
+14. Select `no` for using Zero 3.
+15. Enter `pdsh` for the Deepspeed multinode launcher.
+16. Enter `deepspeed_hostfile` for the Deepspeed hostfile.
+17. Select `no` for using custom launch utility options.
+18. Select `no` for using a TPU.
+19. Enter the number of processes (e.g., `8` for 8 GPUs).
+
+### Node 2 Configuration
+
+Repeat the above steps for Node 2, but change the machine rank to `1`.
+
+## Step 5: Finetuning
+
+On Node 1 (server), run the finetuning process using Accelerate:
+
+```bash
+accelerate launch -m axolotl.cli.train examples/llama-2/qlora.yml
 ```
 
-
-change permissions 
-
-```
-ls -ld /usr/lib/x86_64-linux-gnu/pdsh
-ls -ld /usr/lib
-```
-```
-chown root:root /usr/lib/x86_64-linux-gnu/pdsh
-chown root:root /usr/lib
-```
-
-```
-chmod 755 /usr/lib/x86_64-linux-gnu/pdsh
-chmod 755 /usr/lib
-```
-
-and run 
-```
-deepspeed --no_local_rank --hostfile deepspeed_hostfile --launcher pdsh --master_port 5000 --ssh_port 2222 --module axolotl.cli.train qlora.yml
-```
+This will start the finetuning process across all nodes. You can check the different IP addresses before each step to verify that the training is running on every node.
