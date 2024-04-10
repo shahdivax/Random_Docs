@@ -13,7 +13,7 @@ This guide explains how to set up a distributed finetuning environment using Axo
 1. Open the `sshd_config` file on all nodes and the server:
 
 ```bash
-sudo nano ~/etc/ssh/sshd_config
+sudo nano /etc/ssh/sshd_config
 ```
 
 2. Uncomment the `PubkeyAuthentication` line to enable public key authentication.
